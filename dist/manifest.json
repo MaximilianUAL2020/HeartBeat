@@ -1,0 +1,20 @@
+{
+  "name": "210409_Build_1",
+  "version": "1.0.0",
+  "description": "Learning to code chrome extensions!",
+  "permissions": ["tabs", "storage"],
+  "content_scripts": [
+    {
+      "js": ["js/content.js"],
+      "matches": ["<all_urls>"],
+      "run_at": "document_start"
+    }
+  ],
+  "background": {
+    "scripts": ["js/background.js"]
+  },
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  "manifest_version": 2
+}
