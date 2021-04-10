@@ -1,21 +1,29 @@
-l<template>
+<template>
   <div class="main-wrapper">
     <!-- timer -->
-    <div class="center border" id="timer-wrapper">
-      <span id="timer">{{ min + " : " + sec }}</span>
+    <div
+      :class="{ disabled: !remaining || !active }"
+      class="center border"
+      id="timer-wrapper"
+    >
+      <span id="timer">
+        {{ min + " : " + sec }}
+      </span>
     </div>
     <!-- buttons -->
     <div class="row">
-      <button>Toggle</button>
-      <button>Reset</button>
-    </div>
-    <!-- settings -->
-    <div>
-      <button>Settings</button>
+      <button :disabled="!remaining">Reset</button>
+      <button :disabled="!remaining">Settings</button>
     </div>
     <!-- toggle -->
     <div class="switch">
-      <input id="my-switch" type="checkbox" class="switch-checkbox" />
+      <input
+        id="my-switch"
+        type="checkbox"
+        class="switch-checkbox"
+        @click="togglePlaying"
+        v-model="active"
+      />
       <label class="switch-label" for="my-switch"></label>
     </div>
   </div>
@@ -25,19 +33,43 @@ l<template>
 export default {
   data() {
     return {
-      remaining: 0,
+      loop: 0,
+      active: false,
+      remaining: 1200,
     };
   },
   methods: {
-    getTime() {
-      chrome.runtime.sendMessage({ req: "time" }, (res) => {
-        this.remaining = res.time;
+    getTime(bool) {
+      chrome.runtime.sendMessage({ req: bool ? "update" : "get" }, (res) => {
+        this.remaining = res.remaining;
       });
     },
-    loop() {
-      setInterval(() => {
-        this.getTime();
+    setLoop() {
+      this.getTime(false);
+      this.loop = setInterval(() => {
+        this.getTime(true);
       }, 1000);
+    },
+    togglePlaying() {
+      this.active ? clearInterval(this.loop) : this.setLoop();
+      this.active = !this.active;
+      this.setState(this.active);
+    },
+    setState(bool) {
+      chrome.storage.sync.set(
+        {
+          toggleTimerActive: bool,
+        },
+        () => {
+          console.log("Toggle State Updated!");
+        }
+      );
+    },
+    getState() {
+      chrome.storage.sync.get(["toggleTimerActive"], (result) => {
+        this.active = result.toggleTimerActive;
+        this.getTime(false);
+      });
     },
   },
   computed: {
@@ -51,8 +83,8 @@ export default {
     },
   },
   created() {
-    this.getTime();
-    this.loop();
+    this.getState();
+    if (this.active) this.setLoop();
   },
 };
 </script>
@@ -66,15 +98,15 @@ export default {
   display: grid;
   background-color: var(--dark-grey);
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto auto auto var(--master-height) var(--master-height) var(
+  grid-template-rows: auto auto auto auto var(--master-height) var(
       --master-height
     );
   grid-template-areas:
     "timer timer timer timer"
     "timer timer timer timer"
     "timer timer timer timer"
+    "timer timer timer timer"
     "buttons buttons buttons buttons"
-    "settings settings settings settings"
     "toggle toggle toggle toggle";
 }
 .center {
@@ -100,6 +132,7 @@ export default {
 .main-wrapper div {
   width: 100%;
   height: 100%;
+  transition: all 0.2s;
 }
 .main-wrapper div:nth-of-type(1) {
   grid-area: timer;
@@ -110,10 +143,6 @@ export default {
   border-radius: 100px;
 }
 .main-wrapper div:nth-of-type(3) {
-  grid-area: settings;
-  border-radius: 100px;
-}
-.main-wrapper div:nth-of-type(4) {
   grid-area: toggle;
   position: relative;
   border: none;
@@ -121,11 +150,8 @@ export default {
 .no-border {
   border: none !important;
 }
-.disabled-child {
+.disabled {
   color: var(--medium-grey);
-  transition: all 0.2s;
-}
-.disabled-parent {
   border: 1px solid var(--medium-grey);
   transition: all 0.2s;
 }
@@ -133,6 +159,7 @@ export default {
   height: auto;
   min-width: 3em;
   font-size: 3em;
+  border: none !important;
   transition: all 0.2s;
 }
 button,

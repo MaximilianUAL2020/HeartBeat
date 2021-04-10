@@ -35,28 +35,60 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      remaining: 0
+      loop: 0,
+      active: false,
+      remaining: 1200
     };
   },
   methods: {
-    getTime: function getTime() {
+    getTime: function getTime(bool) {
       var _this = this;
 
       chrome.runtime.sendMessage({
-        req: "time"
+        req: bool ? "update" : "get"
       }, function (res) {
-        _this.remaining = res.time;
+        _this.remaining = res.remaining;
       });
     },
-    loop: function loop() {
+    setLoop: function setLoop() {
       var _this2 = this;
 
-      setInterval(function () {
-        _this2.getTime();
+      this.getTime(false);
+      this.loop = setInterval(function () {
+        _this2.getTime(true);
       }, 1000);
+    },
+    togglePlaying: function togglePlaying() {
+      this.active ? clearInterval(this.loop) : this.setLoop();
+      this.active = !this.active;
+      this.setState(this.active);
+    },
+    setState: function setState(bool) {
+      chrome.storage.sync.set({
+        toggleTimerActive: bool
+      }, function () {
+        console.log("Toggle State Updated!");
+      });
+    },
+    getState: function getState() {
+      var _this3 = this;
+
+      chrome.storage.sync.get(["toggleTimerActive"], function (result) {
+        _this3.active = result.toggleTimerActive;
+
+        _this3.getTime(false);
+      });
     }
   },
   computed: {
@@ -70,8 +102,8 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   created: function created() {
-    this.getTime();
-    this.loop();
+    this.getState();
+    if (this.active) this.setLoop();
   }
 });
 
@@ -94,7 +126,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.main-wrapper[data-v-a8fbc54a] {\n  gap: 1em;\n  width: 100%;\n  height: 100%;\n  padding: 1em;\n  display: grid;\n  background-color: var(--dark-grey);\n  grid-template-columns: repeat(4, 1fr);\n  grid-template-rows: auto auto auto var(--master-height) var(--master-height) var(\n      --master-height\n    );\n  grid-template-areas:\n    \"timer timer timer timer\"\n    \"timer timer timer timer\"\n    \"timer timer timer timer\"\n    \"buttons buttons buttons buttons\"\n    \"settings settings settings settings\"\n    \"toggle toggle toggle toggle\";\n}\n.center[data-v-a8fbc54a] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.row[data-v-a8fbc54a] {\n  gap: 1em;\n  display: flex;\n  flex-direction: row;\n}\n.border[data-v-a8fbc54a] {\n  background: transparent;\n  color: var(--light-grey);\n  border: 1px solid var(--light-grey);\n}\n.filled[data-v-a8fbc54a] {\n  border: none;\n  color: var(--dark-grey);\n  background: var(--light-grey);\n}\n.main-wrapper div[data-v-a8fbc54a] {\n  width: 100%;\n  height: 100%;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(1) {\n  grid-area: timer;\n  border-radius: 20px;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(2) {\n  grid-area: buttons;\n  border-radius: 100px;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(3) {\n  grid-area: settings;\n  border-radius: 100px;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(4) {\n  grid-area: toggle;\n  position: relative;\n  border: none;\n}\n.no-border[data-v-a8fbc54a] {\n  border: none !important;\n}\n.disabled-child[data-v-a8fbc54a] {\n  color: var(--medium-grey);\n  transition: all 0.2s;\n}\n.disabled-parent[data-v-a8fbc54a] {\n  border: 1px solid var(--medium-grey);\n  transition: all 0.2s;\n}\n#timer[data-v-a8fbc54a] {\n  height: auto;\n  min-width: 3em;\n  font-size: 3em;\n  transition: all 0.2s;\n}\nbutton[data-v-a8fbc54a],\nbutton[data-v-a8fbc54a]:focus,\nbutton[data-v-a8fbc54a]:active {\n  width: 100%;\n  height: 100%;\n  border: none;\n  outline: none;\n  cursor: pointer;\n  border-radius: inherit;\n  background-color: transparent;\n  color: var(--dark-greygrey);\n  background: var(--light-grey);\n  border: 1px solid var(--dark-grey);\n  transition: all 0.2s;\n}\nbutton[data-v-a8fbc54a]:hover {\n  cursor: pointer;\n  background: transparent;\n  color: var(--light-grey);\n  border: 1px solid var(--light-grey);\n  transition: all 0.2s;\n}\nbutton[data-v-a8fbc54a]:disabled {\n  cursor: not-allowed;\n  background: transparent;\n  color: var(--medium-grey);\n  border: 1px solid var(--medium-grey);\n}\n.switch-checkbox[data-v-a8fbc54a] {\n  opacity: 0;\n  position: absolute;\n  pointer-events: none;\n}\n.switch-label[data-v-a8fbc54a] {\n  padding: 0;\n  display: block;\n  cursor: pointer;\n  overflow: hidden;\n  height: var(--master-height);\n  line-height: var(--master-height);\n  border-radius: var(--master-height);\n  border: 1px solid var(--light-grey);\n  transition: all 0.2s;\n}\n.switch-label[data-v-a8fbc54a]:before {\n  bottom: 0;\n  margin: 0px;\n  content: \"\";\n  display: block;\n  position: absolute;\n  border-radius: 100px;\n  top: var(--myPadding);\n  right: var(--button-end);\n  width: var(--button-height);\n  height: var(--button-height);\n  background: var(--light-grey);\n  transition: all 0.2s;\n}\n.switch-checkbox:checked + .switch-label[data-v-a8fbc54a] {\n  background: var(--light-grey);\n}\n.switch-checkbox:checked + .switch-label[data-v-a8fbc54a]:before {\n  right: var(--myPadding);\n  background: var(--dark-grey);\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.main-wrapper[data-v-a8fbc54a] {\n  gap: 1em;\n  width: 100%;\n  height: 100%;\n  padding: 1em;\n  display: grid;\n  background-color: var(--dark-grey);\n  grid-template-columns: repeat(4, 1fr);\n  grid-template-rows: auto auto auto auto var(--master-height) var(\n      --master-height\n    );\n  grid-template-areas:\n    \"timer timer timer timer\"\n    \"timer timer timer timer\"\n    \"timer timer timer timer\"\n    \"timer timer timer timer\"\n    \"buttons buttons buttons buttons\"\n    \"toggle toggle toggle toggle\";\n}\n.center[data-v-a8fbc54a] {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.row[data-v-a8fbc54a] {\n  gap: 1em;\n  display: flex;\n  flex-direction: row;\n}\n.border[data-v-a8fbc54a] {\n  background: transparent;\n  color: var(--light-grey);\n  border: 1px solid var(--light-grey);\n}\n.filled[data-v-a8fbc54a] {\n  border: none;\n  color: var(--dark-grey);\n  background: var(--light-grey);\n}\n.main-wrapper div[data-v-a8fbc54a] {\n  width: 100%;\n  height: 100%;\n  transition: all 0.2s;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(1) {\n  grid-area: timer;\n  border-radius: 20px;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(2) {\n  grid-area: buttons;\n  border-radius: 100px;\n}\n.main-wrapper div[data-v-a8fbc54a]:nth-of-type(3) {\n  grid-area: toggle;\n  position: relative;\n  border: none;\n}\n.no-border[data-v-a8fbc54a] {\n  border: none !important;\n}\n.disabled[data-v-a8fbc54a] {\n  color: var(--medium-grey);\n  border: 1px solid var(--medium-grey);\n  transition: all 0.2s;\n}\n#timer[data-v-a8fbc54a] {\n  height: auto;\n  min-width: 3em;\n  font-size: 3em;\n  border: none !important;\n  transition: all 0.2s;\n}\nbutton[data-v-a8fbc54a],\nbutton[data-v-a8fbc54a]:focus,\nbutton[data-v-a8fbc54a]:active {\n  width: 100%;\n  height: 100%;\n  border: none;\n  outline: none;\n  cursor: pointer;\n  border-radius: inherit;\n  background-color: transparent;\n  color: var(--dark-greygrey);\n  background: var(--light-grey);\n  border: 1px solid var(--dark-grey);\n  transition: all 0.2s;\n}\nbutton[data-v-a8fbc54a]:hover {\n  cursor: pointer;\n  background: transparent;\n  color: var(--light-grey);\n  border: 1px solid var(--light-grey);\n  transition: all 0.2s;\n}\nbutton[data-v-a8fbc54a]:disabled {\n  cursor: not-allowed;\n  background: transparent;\n  color: var(--medium-grey);\n  border: 1px solid var(--medium-grey);\n}\n.switch-checkbox[data-v-a8fbc54a] {\n  opacity: 0;\n  position: absolute;\n  pointer-events: none;\n}\n.switch-label[data-v-a8fbc54a] {\n  padding: 0;\n  display: block;\n  cursor: pointer;\n  overflow: hidden;\n  height: var(--master-height);\n  line-height: var(--master-height);\n  border-radius: var(--master-height);\n  border: 1px solid var(--light-grey);\n  transition: all 0.2s;\n}\n.switch-label[data-v-a8fbc54a]:before {\n  bottom: 0;\n  margin: 0px;\n  content: \"\";\n  display: block;\n  position: absolute;\n  border-radius: 100px;\n  top: var(--myPadding);\n  right: var(--button-end);\n  width: var(--button-height);\n  height: var(--button-height);\n  background: var(--light-grey);\n  transition: all 0.2s;\n}\n.switch-checkbox:checked + .switch-label[data-v-a8fbc54a] {\n  background: var(--light-grey);\n}\n.switch-checkbox:checked + .switch-label[data-v-a8fbc54a]:before {\n  right: var(--myPadding);\n  background: var(--dark-grey);\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -287,52 +319,70 @@ var render = function() {
   return _c("div", { staticClass: "main-wrapper" }, [
     _c(
       "div",
-      { staticClass: "center border", attrs: { id: "timer-wrapper" } },
+      {
+        staticClass: "center border",
+        class: { disabled: !_vm.remaining || !_vm.active },
+        attrs: { id: "timer-wrapper" }
+      },
       [
         _c("span", { attrs: { id: "timer" } }, [
-          _vm._v(_vm._s(_vm.min + " : " + _vm.sec))
+          _vm._v("\n      " + _vm._s(_vm.min + " : " + _vm.sec) + "\n    ")
         ])
       ]
     ),
     _vm._v(" "),
-    _vm._m(0),
-    _vm._v(" "),
-    _vm._m(1),
-    _vm._v(" "),
-    _vm._m(2)
-  ])
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "row" }, [
-      _c("button", [_vm._v("Toggle")]),
+    _c("div", { staticClass: "row" }, [
+      _c("button", { attrs: { disabled: !_vm.remaining } }, [_vm._v("Reset")]),
       _vm._v(" "),
-      _c("button", [_vm._v("Reset")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [_c("button", [_vm._v("Settings")])])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "switch" }, [
+      _c("button", { attrs: { disabled: !_vm.remaining } }, [
+        _vm._v("Settings")
+      ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "switch" }, [
       _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.active,
+            expression: "active"
+          }
+        ],
         staticClass: "switch-checkbox",
-        attrs: { id: "my-switch", type: "checkbox" }
+        attrs: { id: "my-switch", type: "checkbox" },
+        domProps: {
+          checked: Array.isArray(_vm.active)
+            ? _vm._i(_vm.active, null) > -1
+            : _vm.active
+        },
+        on: {
+          click: _vm.togglePlaying,
+          change: function($event) {
+            var $$a = _vm.active,
+              $$el = $event.target,
+              $$c = $$el.checked ? true : false
+            if (Array.isArray($$a)) {
+              var $$v = null,
+                $$i = _vm._i($$a, $$v)
+              if ($$el.checked) {
+                $$i < 0 && (_vm.active = $$a.concat([$$v]))
+              } else {
+                $$i > -1 &&
+                  (_vm.active = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
+              }
+            } else {
+              _vm.active = $$c
+            }
+          }
+        }
       }),
       _vm._v(" "),
       _c("label", { staticClass: "switch-label", attrs: { for: "my-switch" } })
     ])
-  }
-]
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
