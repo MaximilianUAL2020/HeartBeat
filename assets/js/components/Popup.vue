@@ -1,29 +1,17 @@
 <template>
   <div class="main-wrapper">
     <!-- timer -->
-    <div
-      :class="{ disabled: !remaining || !active }"
-      class="center border"
-      id="timer-wrapper"
-    >
-      <span id="timer">
-        {{ min + " : " + sec }}
-      </span>
+    <div class="center border" id="timer-wrapper">
+      <span id="timer"></span>
     </div>
     <!-- buttons -->
     <div class="row">
-      <button :disabled="!remaining">Reset</button>
-      <button :disabled="!remaining">Settings</button>
+      <button>Reset</button>
+      <button>Settings</button>
     </div>
     <!-- toggle -->
     <div class="switch">
-      <input
-        id="my-switch"
-        type="checkbox"
-        class="switch-checkbox"
-        @click="togglePlaying"
-        v-model="active"
-      />
+      <input id="my-switch" type="checkbox" class="switch-checkbox" />
       <label class="switch-label" for="my-switch"></label>
     </div>
   </div>
@@ -31,60 +19,10 @@
 
 <script>
 export default {
-  data() {
-    return {
-      loop: 0,
-      active: false,
-      remaining: 1200,
-    };
-  },
-  methods: {
-    getTime(bool) {
-      chrome.runtime.sendMessage({ req: bool ? "update" : "get" }, (res) => {
-        this.remaining = res.remaining;
-      });
-    },
-    setLoop() {
-      this.getTime(false);
-      this.loop = setInterval(() => {
-        this.getTime(true);
-      }, 1000);
-    },
-    togglePlaying() {
-      this.active ? clearInterval(this.loop) : this.setLoop();
-      this.active = !this.active;
-      this.setState(this.active);
-    },
-    setState(bool) {
-      chrome.storage.sync.set(
-        {
-          toggleTimerActive: bool,
-        },
-        () => {
-          console.log("Toggle State Updated!");
-        }
-      );
-    },
-    getState() {
-      chrome.storage.sync.get(["toggleTimerActive"], (result) => {
-        this.active = result.toggleTimerActive;
-        this.getTime(false);
-      });
-    },
-  },
-  computed: {
-    min() {
-      let min = Math.floor(this.remaining / 60);
-      return min < 10 ? "0" + min : min;
-    },
-    sec() {
-      let sec = this.remaining % 60;
-      return sec < 10 ? "0" + sec : sec;
-    },
-  },
   created() {
-    this.getState();
-    if (this.active) this.setLoop();
+    chrome.runtime.getBackgroundPage((background) => {
+      console.log(background.cow);
+    });
   },
 };
 </script>
