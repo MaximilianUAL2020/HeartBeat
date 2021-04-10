@@ -2,16 +2,16 @@ l<template>
   <div class="main-wrapper">
     <!-- timer -->
     <div class="center border" id="timer-wrapper">
-      <span id="timer"></span>
+      <span id="timer">{{ min + " : " + sec }}</span>
     </div>
     <!-- buttons -->
     <div class="row">
-      <button id="toggle" onclick="toggleCounter()">Toggle</button>
-      <button id="reset" onclick="setTimer(false)">Reset</button>
+      <button>Toggle</button>
+      <button>Reset</button>
     </div>
     <!-- settings -->
     <div>
-      <button id="settings">Settings</button>
+      <button>Settings</button>
     </div>
     <!-- toggle -->
     <div class="switch">
@@ -22,7 +22,39 @@ l<template>
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      remaining: 0,
+    };
+  },
+  methods: {
+    getTime() {
+      chrome.runtime.sendMessage({ req: "time" }, (res) => {
+        this.remaining = res.time;
+      });
+    },
+    loop() {
+      setInterval(() => {
+        this.getTime();
+      }, 1000);
+    },
+  },
+  computed: {
+    min() {
+      let min = Math.floor(this.remaining / 60);
+      return min < 10 ? "0" + min : min;
+    },
+    sec() {
+      let sec = this.remaining % 60;
+      return sec < 10 ? "0" + sec : sec;
+    },
+  },
+  created() {
+    this.getTime();
+    this.loop();
+  },
+};
 </script>
 
 <style scoped>

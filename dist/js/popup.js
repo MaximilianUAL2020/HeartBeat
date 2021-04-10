@@ -35,7 +35,45 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {
+      remaining: 0
+    };
+  },
+  methods: {
+    getTime: function getTime() {
+      var _this = this;
+
+      chrome.runtime.sendMessage({
+        req: "time"
+      }, function (res) {
+        _this.remaining = res.time;
+      });
+    },
+    loop: function loop() {
+      var _this2 = this;
+
+      setInterval(function () {
+        _this2.getTime();
+      }, 1000);
+    }
+  },
+  computed: {
+    min: function min() {
+      var min = Math.floor(this.remaining / 60);
+      return min < 10 ? "0" + min : min;
+    },
+    sec: function sec() {
+      var sec = this.remaining % 60;
+      return sec < 10 ? "0" + sec : sec;
+    }
+  },
+  created: function created() {
+    this.getTime();
+    this.loop();
+  }
+});
 
 /***/ }),
 
@@ -246,45 +284,52 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "main-wrapper" }, [
+    _c(
+      "div",
+      { staticClass: "center border", attrs: { id: "timer-wrapper" } },
+      [
+        _c("span", { attrs: { id: "timer" } }, [
+          _vm._v(_vm._s(_vm.min + " : " + _vm.sec))
+        ])
+      ]
+    ),
+    _vm._v(" "),
+    _vm._m(0),
+    _vm._v(" "),
+    _vm._m(1),
+    _vm._v(" "),
+    _vm._m(2)
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "main-wrapper" }, [
-      _c(
-        "div",
-        { staticClass: "center border", attrs: { id: "timer-wrapper" } },
-        [_c("span", { attrs: { id: "timer" } })]
-      ),
+    return _c("div", { staticClass: "row" }, [
+      _c("button", [_vm._v("Toggle")]),
       _vm._v(" "),
-      _c("div", { staticClass: "row" }, [
-        _c("button", { attrs: { id: "toggle", onclick: "toggleCounter()" } }, [
-          _vm._v("Toggle")
-        ]),
-        _vm._v(" "),
-        _c("button", { attrs: { id: "reset", onclick: "setTimer(false)" } }, [
-          _vm._v("Reset")
-        ])
-      ]),
+      _c("button", [_vm._v("Reset")])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [_c("button", [_vm._v("Settings")])])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "switch" }, [
+      _c("input", {
+        staticClass: "switch-checkbox",
+        attrs: { id: "my-switch", type: "checkbox" }
+      }),
       _vm._v(" "),
-      _c("div", [
-        _c("button", { attrs: { id: "settings" } }, [_vm._v("Settings")])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "switch" }, [
-        _c("input", {
-          staticClass: "switch-checkbox",
-          attrs: { id: "my-switch", type: "checkbox" }
-        }),
-        _vm._v(" "),
-        _c("label", {
-          staticClass: "switch-label",
-          attrs: { for: "my-switch" }
-        })
-      ])
+      _c("label", { staticClass: "switch-label", attrs: { for: "my-switch" } })
     ])
   }
 ]
