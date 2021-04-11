@@ -1,17 +1,27 @@
 <template>
   <div class="main-wrapper">
     <!-- timer -->
-    <div class="center border" id="timer-wrapper">
-      <span id="timer"></span>
+    <div
+      id="timer-wrapper"
+      class="center border"
+      :class="{ disabled: !counter || !this.state }"
+    >
+      <span id="timer">{{ min + " : " + sec }}</span>
     </div>
     <!-- buttons -->
     <div class="row">
-      <button>Reset</button>
-      <button>Settings</button>
+      <button :disabled="!counter">Reset</button>
+      <button :disabled="!counter">Settings</button>
     </div>
     <!-- toggle -->
     <div class="switch">
-      <input id="my-switch" type="checkbox" class="switch-checkbox" />
+      <input
+        id="my-switch"
+        type="checkbox"
+        class="switch-checkbox"
+        @click="toggle"
+        v-model="state"
+      />
       <label class="switch-label" for="my-switch"></label>
     </div>
   </div>
@@ -19,9 +29,43 @@
 
 <script>
 export default {
+  data() {
+    return {
+      counter: 0,
+      state: false,
+    };
+  },
+  methods: {
+    toggle() {
+      this.state = !this.state;
+      chrome.storage.sync.set({
+        myState: this.state,
+      });
+    },
+  },
+  computed: {
+    min() {
+      let min = Math.floor(this.counter / 60);
+      return min < 10 ? "0" + min : min;
+    },
+    sec() {
+      let sec = this.counter % 60;
+      return sec < 10 ? "0" + sec : sec;
+    },
+  },
   created() {
-    chrome.runtime.getBackgroundPage((background) => {
-      console.log(background.cow);
+    // set values from storage
+    chrome.storage.sync.get(["myCounter", "myState"], (result) => {
+      this.counter = result.myCounter;
+      this.state = result.myState;
+    });
+    // listen to counter changes
+    chrome.storage.onChanged.addListener((changes, namespace) => {
+      if (namespace === "sync") {
+        if (changes.myCounter) {
+          this.counter = changes.myCounter.newValue;
+        }
+      }
     });
   },
 };

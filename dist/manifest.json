@@ -2,7 +2,7 @@
   "name": "210409_Build_1",
   "version": "1.0.0",
   "description": "Learning to code chrome extensions!",
-  "permissions": ["tabs", "storage", "background"],
+  "permissions": ["storage", "background", "unlimitedStorage"],
   "content_scripts": [
     {
       "js": ["js/content.js"],

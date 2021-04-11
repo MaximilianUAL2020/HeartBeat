@@ -31,10 +31,56 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {
+      counter: 0,
+      state: false
+    };
+  },
+  methods: {
+    toggle: function toggle() {
+      this.state = !this.state;
+      chrome.storage.sync.set({
+        myState: this.state
+      });
+    }
+  },
+  computed: {
+    min: function min() {
+      var min = Math.floor(this.counter / 60);
+      return min < 10 ? "0" + min : min;
+    },
+    sec: function sec() {
+      var sec = this.counter % 60;
+      return sec < 10 ? "0" + sec : sec;
+    }
+  },
   created: function created() {
-    chrome.runtime.getBackgroundPage(function (background) {
-      console.log(background.cow);
+    var _this = this;
+
+    // set values from storage
+    chrome.storage.sync.get(["myCounter", "myState"], function (result) {
+      _this.counter = result.myCounter;
+      _this.state = result.myState;
+    }); // listen to counter changes
+
+    chrome.storage.onChanged.addListener(function (changes, namespace) {
+      if (namespace === "sync") {
+        if (changes.myCounter) {
+          _this.counter = changes.myCounter.newValue;
+        }
+      }
     });
   }
 });
@@ -248,40 +294,71 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "main-wrapper" }, [
-      _c(
-        "div",
-        { staticClass: "center border", attrs: { id: "timer-wrapper" } },
-        [_c("span", { attrs: { id: "timer" } })]
-      ),
+  return _c("div", { staticClass: "main-wrapper" }, [
+    _c(
+      "div",
+      {
+        staticClass: "center border",
+        class: { disabled: !_vm.counter || !this.state },
+        attrs: { id: "timer-wrapper" }
+      },
+      [
+        _c("span", { attrs: { id: "timer" } }, [
+          _vm._v(_vm._s(_vm.min + " : " + _vm.sec))
+        ])
+      ]
+    ),
+    _vm._v(" "),
+    _c("div", { staticClass: "row" }, [
+      _c("button", { attrs: { disabled: !_vm.counter } }, [_vm._v("Reset")]),
       _vm._v(" "),
-      _c("div", { staticClass: "row" }, [
-        _c("button", [_vm._v("Reset")]),
-        _vm._v(" "),
-        _c("button", [_vm._v("Settings")])
-      ]),
+      _c("button", { attrs: { disabled: !_vm.counter } }, [_vm._v("Settings")])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "switch" }, [
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.state,
+            expression: "state"
+          }
+        ],
+        staticClass: "switch-checkbox",
+        attrs: { id: "my-switch", type: "checkbox" },
+        domProps: {
+          checked: Array.isArray(_vm.state)
+            ? _vm._i(_vm.state, null) > -1
+            : _vm.state
+        },
+        on: {
+          click: _vm.toggle,
+          change: function($event) {
+            var $$a = _vm.state,
+              $$el = $event.target,
+              $$c = $$el.checked ? true : false
+            if (Array.isArray($$a)) {
+              var $$v = null,
+                $$i = _vm._i($$a, $$v)
+              if ($$el.checked) {
+                $$i < 0 && (_vm.state = $$a.concat([$$v]))
+              } else {
+                $$i > -1 &&
+                  (_vm.state = $$a.slice(0, $$i).concat($$a.slice($$i + 1)))
+              }
+            } else {
+              _vm.state = $$c
+            }
+          }
+        }
+      }),
       _vm._v(" "),
-      _c("div", { staticClass: "switch" }, [
-        _c("input", {
-          staticClass: "switch-checkbox",
-          attrs: { id: "my-switch", type: "checkbox" }
-        }),
-        _vm._v(" "),
-        _c("label", {
-          staticClass: "switch-label",
-          attrs: { for: "my-switch" }
-        })
-      ])
+      _c("label", { staticClass: "switch-label", attrs: { for: "my-switch" } })
     ])
-  }
-]
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
