@@ -45,14 +45,24 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       counter: 0,
-      state: false
+      state: false,
+      icons: {
+        active: "icons/48-on.png",
+        inactive: "icons/48-off.png"
+      }
     };
   },
   methods: {
     toggle: function toggle() {
+      var _this = this;
+
       this.state = !this.state;
       chrome.storage.local.set({
         myState: this.state
+      }, function () {
+        chrome.browserAction.setIcon({
+          path: _this.icons[_this.state ? "active" : "inactive"]
+        });
       });
     },
     reset: function reset() {
@@ -74,18 +84,18 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   created: function created() {
-    var _this = this;
+    var _this2 = this;
 
     // set values from storage
     chrome.storage.local.get(["myCounter", "myState"], function (result) {
-      _this.counter = result.myCounter;
-      _this.state = result.myState;
+      _this2.counter = result.myCounter;
+      _this2.state = result.myState;
     }); // listen to counter changes
 
     chrome.storage.onChanged.addListener(function (changes, namespace) {
       if (namespace === "local") {
         if (changes.myCounter) {
-          _this.counter = changes.myCounter.newValue;
+          _this2.counter = changes.myCounter.newValue;
         }
       }
     });

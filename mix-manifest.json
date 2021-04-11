@@ -2,5 +2,9 @@
     "/dist/js/background.js": "/dist/js/background.js",
     "/dist/js/content.js": "/dist/js/content.js",
     "/dist/js/popup.js": "/dist/js/popup.js",
-    "/dist/css/popup.css": "/dist/css/popup.css"
+    "/dist/css/popup.css": "/dist/css/popup.css",
+    "/dist/icons/128.png": "/dist/icons/128.png",
+    "/dist/icons/16.png": "/dist/icons/16.png",
+    "/dist/icons/48-off.png": "/dist/icons/48-off.png",
+    "/dist/icons/48-on.png": "/dist/icons/48-on.png"
 }

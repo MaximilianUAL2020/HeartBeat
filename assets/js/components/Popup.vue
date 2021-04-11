@@ -33,14 +33,25 @@ export default {
     return {
       counter: 0,
       state: false,
+      icons: {
+        active: "icons/48-on.png",
+        inactive: "icons/48-off.png",
+      },
     };
   },
   methods: {
     toggle() {
       this.state = !this.state;
-      chrome.storage.local.set({
-        myState: this.state,
-      });
+      chrome.storage.local.set(
+        {
+          myState: this.state,
+        },
+        () => {
+          chrome.browserAction.setIcon({
+            path: this.icons[this.state ? "active" : "inactive"],
+          });
+        }
+      );
     },
     reset() {
       chrome.runtime.sendMessage({ msg: "reset" }, (res) => {

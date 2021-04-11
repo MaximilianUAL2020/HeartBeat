@@ -5,6 +5,11 @@ let pause = 20000;
 let myState = false;
 let myCounter = limit;
 
+const icons = {
+  active: "../icons/48-on.png",
+  inactive: "../icons/48-off.png",
+};
+
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set(
     {
@@ -22,6 +27,7 @@ updateCounter(); // reset counter to limit (local storage)
 // set values from storage
 chrome.storage.local.get(["myState"], (result) => {
   myState = result.myState;
+  setIcon(myState);
   if (myState) play();
 });
 // listen to state changes
@@ -37,6 +43,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.msg === "reset") reset();
   sendResponse(null);
 });
+
 // handle counter
 function decrement() {
   myCounter > 0 ? myCounter-- : delay();
@@ -79,14 +86,8 @@ function handleState(state) {
     loop = setInterval(decrement, 1000);
   }
 }
-
-// 1. Run interval in the background script
-// 2. Option 1 -> Send message to popup when active
-// 3. Option 2 -> updateCounter storage value and pull in from popup
-
-// Functionality
-
-// 1. Create a countdown that keeps running when the popup isn't active
-// 2. Toggle (delay/Play) the extension on and off
-// 3. Reset the myCounter of the extension
-// 4. Create a 20 second timeout before resuming the countdown
+function setIcon(bool) {
+  chrome.browserAction.setIcon({
+    path: icons[bool ? "active" : "inactive"],
+  });
+}
