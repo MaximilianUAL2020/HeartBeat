@@ -7,57 +7,73 @@
   \*********************************/
 /***/ (() => {
 
+var loop;
+var timeout;
+var limit = 1200;
+var pause = 20000;
+var myState = false;
+var myCounter = limit;
 chrome.runtime.onInstalled.addListener(function () {
-  chrome.storage.sync.set({
-    myCounter: 10,
+  chrome.storage.local.set({
+    myCounter: limit,
     myState: false
   }, function () {
     console.log("Installed!");
   });
 });
-var myCounter = 0;
-var myState = false; // set values from storage
+updateCounter(); // reset counter to limit (local storage)
+// set values from storage
 
-chrome.storage.sync.get(["myCounter", "myState"], function (result) {
-  myCounter = result.myCounter;
+chrome.storage.local.get(["myState"], function (result) {
   myState = result.myState;
   if (myState) play();
-});
-var loop;
-var timeout;
-var limit = 10; // listen to state changes
+}); // listen to state changes
 
 chrome.storage.onChanged.addListener(function (changes, namespace) {
-  if (namespace === "sync") {
+  if (namespace === "local") {
     if (changes.myState) {
       myState = changes.myState.newValue;
       handleState(myState);
     }
   }
 });
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.msg === "reset") reset();
+  sendResponse(null);
+}); // handle counter
 
 function decrement() {
-  myCounter > 0 ? myCounter-- : pause();
+  myCounter > 0 ? myCounter-- : delay();
   updateCounter();
-}
+} // update counter in storage
+
 
 function updateCounter() {
-  chrome.storage.sync.set({
+  chrome.storage.local.set({
     myCounter: myCounter
   });
-}
+} // restart the counter
+
 
 function play() {
   clearTimeout(timeout);
   myCounter = limit;
   updateCounter();
-  loop = setInterval(decrement, 1000);
-}
+  if (myState) loop = setInterval(decrement, 1000);
+} // delay the counter
 
-function pause() {
+
+function delay() {
   clearInterval(loop);
-  timeout = setTimeout(play, 3000);
-}
+  timeout = setTimeout(play, pause);
+} // reset the counter
+
+
+function reset() {
+  clearInterval(loop);
+  play();
+} // toggle the counter
+
 
 function handleState(state) {
   if (!state) {
@@ -77,7 +93,7 @@ function handleState(state) {
 // 3. Option 2 -> updateCounter storage value and pull in from popup
 // Functionality
 // 1. Create a countdown that keeps running when the popup isn't active
-// 2. Toggle (Pause/Play) the extension on and off
+// 2. Toggle (delay/Play) the extension on and off
 // 3. Reset the myCounter of the extension
 // 4. Create a 20 second timeout before resuming the countdown
 

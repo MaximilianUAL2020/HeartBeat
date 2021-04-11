@@ -10,7 +10,7 @@
     </div>
     <!-- buttons -->
     <div class="row">
-      <button :disabled="!counter">Reset</button>
+      <button :disabled="!counter" @click="reset">Reset</button>
       <button :disabled="!counter">Settings</button>
     </div>
     <!-- toggle -->
@@ -38,8 +38,13 @@ export default {
   methods: {
     toggle() {
       this.state = !this.state;
-      chrome.storage.sync.set({
+      chrome.storage.local.set({
         myState: this.state,
+      });
+    },
+    reset() {
+      chrome.runtime.sendMessage({ msg: "reset" }, (res) => {
+        return;
       });
     },
   },
@@ -55,13 +60,13 @@ export default {
   },
   created() {
     // set values from storage
-    chrome.storage.sync.get(["myCounter", "myState"], (result) => {
+    chrome.storage.local.get(["myCounter", "myState"], (result) => {
       this.counter = result.myCounter;
       this.state = result.myState;
     });
     // listen to counter changes
     chrome.storage.onChanged.addListener((changes, namespace) => {
-      if (namespace === "sync") {
+      if (namespace === "local") {
         if (changes.myCounter) {
           this.counter = changes.myCounter.newValue;
         }

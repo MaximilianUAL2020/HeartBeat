@@ -51,8 +51,15 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     toggle: function toggle() {
       this.state = !this.state;
-      chrome.storage.sync.set({
+      chrome.storage.local.set({
         myState: this.state
+      });
+    },
+    reset: function reset() {
+      chrome.runtime.sendMessage({
+        msg: "reset"
+      }, function (res) {
+        return;
       });
     }
   },
@@ -70,13 +77,13 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     // set values from storage
-    chrome.storage.sync.get(["myCounter", "myState"], function (result) {
+    chrome.storage.local.get(["myCounter", "myState"], function (result) {
       _this.counter = result.myCounter;
       _this.state = result.myState;
     }); // listen to counter changes
 
     chrome.storage.onChanged.addListener(function (changes, namespace) {
-      if (namespace === "sync") {
+      if (namespace === "local") {
         if (changes.myCounter) {
           _this.counter = changes.myCounter.newValue;
         }
@@ -310,7 +317,11 @@ var render = function() {
     ),
     _vm._v(" "),
     _c("div", { staticClass: "row" }, [
-      _c("button", { attrs: { disabled: !_vm.counter } }, [_vm._v("Reset")]),
+      _c(
+        "button",
+        { attrs: { disabled: !_vm.counter }, on: { click: _vm.reset } },
+        [_vm._v("Reset")]
+      ),
       _vm._v(" "),
       _c("button", { attrs: { disabled: !_vm.counter } }, [_vm._v("Settings")])
     ]),
