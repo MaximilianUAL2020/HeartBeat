@@ -1,8 +1,9 @@
 let loop;
 let timeout;
-let limit = 1200;
-let pause = 20000;
+let limit = 5;
+let pause = 1000;
 let myState = false;
+let promptWidth = 400;
 let myCounter = limit;
 
 const icons = {
@@ -65,7 +66,21 @@ function play() {
 // delay the counter
 function delay() {
   clearInterval(loop);
-  timeout = setTimeout(play, pause);
+  let pos = randomPos();
+  chrome.windows.create(
+    {
+      top: pos.h,
+      left: pos.w,
+      width: promptWidth,
+      height: promptWidth,
+      type: "popup",
+      state: "normal",
+      url: chrome.runtime.getURL("prompt.html"),
+    },
+    () => {
+      timeout = setTimeout(play, pause);
+    }
+  );
 }
 // reset the counter
 function reset() {
@@ -86,8 +101,17 @@ function handleState(state) {
     loop = setInterval(decrement, 1000);
   }
 }
+// toggle icon
 function setIcon(bool) {
   chrome.browserAction.setIcon({
     path: icons[bool ? "active" : "inactive"],
   });
+}
+//generate random position
+function randomPos() {
+  let w = screen.width;
+  let h = screen.height;
+  let rw = Math.floor(Math.random() * w - promptWidth) + promptWidth;
+  let rh = Math.floor(Math.random() * h - promptWidth) + promptWidth;
+  return { w: rw, h: rh };
 }

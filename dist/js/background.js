@@ -9,9 +9,10 @@
 
 var loop;
 var timeout;
-var limit = 1200;
-var pause = 20000;
+var limit = 5;
+var pause = 1000;
 var myState = false;
+var promptWidth = 400;
 var myCounter = limit;
 var icons = {
   active: "../icons/48-on.png",
@@ -70,7 +71,18 @@ function play() {
 
 function delay() {
   clearInterval(loop);
-  timeout = setTimeout(play, pause);
+  var pos = randomPos();
+  chrome.windows.create({
+    top: pos.h,
+    left: pos.w,
+    width: promptWidth,
+    height: promptWidth,
+    type: "popup",
+    state: "normal",
+    url: chrome.runtime.getURL("prompt.html")
+  }, function () {
+    timeout = setTimeout(play, pause);
+  });
 } // reset the counter
 
 
@@ -93,12 +105,25 @@ function handleState(state) {
     updateCounter();
     loop = setInterval(decrement, 1000);
   }
-}
+} // toggle icon
+
 
 function setIcon(bool) {
   chrome.browserAction.setIcon({
     path: icons[bool ? "active" : "inactive"]
   });
+} //generate random position
+
+
+function randomPos() {
+  var w = screen.width;
+  var h = screen.height;
+  var rw = Math.floor(Math.random() * w - promptWidth) + promptWidth;
+  var rh = Math.floor(Math.random() * h - promptWidth) + promptWidth;
+  return {
+    w: rw,
+    h: rh
+  };
 }
 
 /***/ }),
@@ -107,6 +132,19 @@ function setIcon(bool) {
 /*!******************************!*\
   !*** ./assets/css/popup.css ***!
   \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
+/***/ "./assets/css/prompt.css":
+/*!*******************************!*\
+  !*** ./assets/css/prompt.css ***!
+  \*******************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -202,6 +240,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
 /******/ 		var installedChunks = {
 /******/ 			"/dist/js/background": 0,
+/******/ 			"dist/css/prompt": 0,
 /******/ 			"dist/css/popup": 0
 /******/ 		};
 /******/ 		
@@ -250,8 +289,9 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["dist/css/popup"], () => (__webpack_require__("./assets/js/background.js")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["dist/css/popup"], () => (__webpack_require__("./assets/css/popup.css")))
+/******/ 	__webpack_require__.O(undefined, ["dist/css/prompt","dist/css/popup"], () => (__webpack_require__("./assets/js/background.js")))
+/******/ 	__webpack_require__.O(undefined, ["dist/css/prompt","dist/css/popup"], () => (__webpack_require__("./assets/css/popup.css")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["dist/css/prompt","dist/css/popup"], () => (__webpack_require__("./assets/css/prompt.css")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

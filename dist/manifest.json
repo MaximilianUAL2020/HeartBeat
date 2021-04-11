@@ -2,7 +2,7 @@
   "name": "210409_Build_1",
   "version": "1.0.0",
   "description": "Learning to code chrome extensions!",
-  "permissions": ["storage", "background", "unlimitedStorage"],
+  "permissions": ["tabs", "storage", "background", "unlimitedStorage"],
   "icons": {
     "16": "icons/16.png",
     "48": "icons/48-on.png",
@@ -18,6 +18,7 @@
   "background": {
     "scripts": ["js/background.js"]
   },
+  "web_accessible_resources": ["css/prompt.css", "prompt.html"],
   "browser_action": {
     "default_popup": "popup.html",
     "default_icon": "icons/48-off.png"
