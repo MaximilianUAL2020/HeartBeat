@@ -66,21 +66,7 @@ function play() {
 // delay the counter
 function delay() {
   clearInterval(loop);
-  let pos = randomPos();
-  chrome.windows.create(
-    {
-      top: pos.h,
-      left: pos.w,
-      width: promptWidth,
-      height: promptWidth,
-      type: "popup",
-      state: "normal",
-      url: chrome.runtime.getURL("prompt.html"),
-    },
-    () => {
-      timeout = setTimeout(play, pause);
-    }
-  );
+  newWindow();
 }
 // reset the counter
 function reset() {
@@ -106,6 +92,24 @@ function setIcon(bool) {
   chrome.browserAction.setIcon({
     path: icons[bool ? "active" : "inactive"],
   });
+}
+// create popup window
+function newWindow() {
+  let pos = randomPos();
+  chrome.windows.create(
+    {
+      top: pos.h,
+      left: pos.w,
+      width: promptWidth,
+      height: promptWidth,
+      type: "popup",
+      state: "normal",
+      url: chrome.runtime.getURL("prompt.html"),
+    },
+    () => {
+      timeout = setTimeout(play, pause);
+    }
+  );
 }
 //generate random position
 function randomPos() {
