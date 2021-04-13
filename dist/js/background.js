@@ -9,80 +9,82 @@
 
 var loop;
 var timeout;
-var limit = 5;
-var pause = 1000;
-var myState = false;
+var step = 300;
+var pause = 20000;
+var limit = 1200;
 var promptWidth = 400;
-var myCounter = limit;
+var active = false;
+var counter = limit;
 var icons = {
   active: "../icons/48-on.png",
   inactive: "../icons/48-off.png"
 };
 chrome.runtime.onInstalled.addListener(function () {
   chrome.storage.local.set({
-    myCounter: limit,
-    myState: false
+    myState: false,
+    myLimit: limit,
+    myCounter: limit
   }, function () {
     console.log("Installed!");
   });
-});
-updateCounter(); // reset counter to limit (local storage)
-// set values from storage
+}); // get values from storage
 
-chrome.storage.local.get(["myState"], function (result) {
-  myState = result.myState;
-  setIcon(myState);
-  if (myState) play();
+chrome.storage.local.get(["myCounter", "myState", "myLimit"], function (result) {
+  counter = result.myCounter;
+  active = result.myState;
+  limit = result.myLimit;
+  setIcon(active);
+  if (active) play();
 }); // listen to state changes
 
 chrome.storage.onChanged.addListener(function (changes, namespace) {
   if (namespace === "local") {
     if (changes.myState) {
-      myState = changes.myState.newValue;
-      handleState(myState);
+      active = changes.myState.newValue;
+      handleState(active);
     }
   }
 });
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.msg === "reset") reset();
+  if (request.msg === "plus") incrementLimit();
+  if (request.msg === "minus") decrementLimit();
   sendResponse(null);
 }); // handle counter
 
-function decrement() {
-  myCounter > 0 ? myCounter-- : delay();
+function decrementCounter() {
+  counter > 0 ? counter-- : delay();
   updateCounter();
-} // update counter in storage
+} // update storage values
 
 
 function updateCounter() {
   chrome.storage.local.set({
-    myCounter: myCounter
+    myCounter: counter
+  });
+}
+
+function updateLimit() {
+  chrome.storage.local.set({
+    myLimit: limit
+  }, function () {
+    counter = limit;
+    updateCounter();
   });
 } // restart the counter
 
 
 function play() {
   clearTimeout(timeout);
-  myCounter = limit;
+  counter = limit;
   updateCounter();
-  if (myState) loop = setInterval(decrement, 1000);
+  if (active) loop = setInterval(decrementCounter, 1000);
 } // delay the counter
 
 
 function delay() {
   clearInterval(loop);
-  var pos = randomPos();
-  chrome.windows.create({
-    top: pos.h,
-    left: pos.w,
-    width: promptWidth,
-    height: promptWidth,
-    type: "popup",
-    state: "normal",
-    url: chrome.runtime.getURL("prompt.html")
-  }, function () {
-    timeout = setTimeout(play, pause);
-  });
+  newWindow();
 } // reset the counter
 
 
@@ -96,14 +98,14 @@ function handleState(state) {
   if (!state) {
     clearInterval(loop);
 
-    if (!myCounter) {
+    if (!counter) {
       clearTimeout(timeout);
-      myCounter = limit;
+      counter = limit;
       updateCounter();
     }
   } else {
     updateCounter();
-    loop = setInterval(decrement, 1000);
+    loop = setInterval(decrementCounter, 1000);
   }
 } // toggle icon
 
@@ -111,6 +113,22 @@ function handleState(state) {
 function setIcon(bool) {
   chrome.browserAction.setIcon({
     path: icons[bool ? "active" : "inactive"]
+  });
+} // create popup window
+
+
+function newWindow() {
+  var pos = randomPos();
+  chrome.windows.create({
+    top: pos.h,
+    left: pos.w,
+    width: promptWidth,
+    height: promptWidth,
+    type: "popup",
+    state: "normal",
+    url: chrome.runtime.getURL("prompt.html")
+  }, function () {
+    timeout = setTimeout(play, pause);
   });
 } //generate random position
 
@@ -124,6 +142,16 @@ function randomPos() {
     w: rw,
     h: rh
   };
+}
+
+function incrementLimit() {
+  limit += step;
+  updateLimit();
+}
+
+function decrementLimit() {
+  limit > step ? limit -= step : limit = step;
+  updateLimit();
 }
 
 /***/ }),

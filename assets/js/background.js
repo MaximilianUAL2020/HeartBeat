@@ -1,10 +1,11 @@
 let loop;
 let timeout;
-let limit = 5;
-let pause = 1000;
-let myState = false;
+const step = 300;
+const pause = 20000;
+let limit = 1200;
 let promptWidth = 400;
-let myCounter = limit;
+let active = false;
+let counter = limit;
 
 const icons = {
   active: "../icons/48-on.png",
@@ -14,8 +15,9 @@ const icons = {
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set(
     {
-      myCounter: limit,
       myState: false,
+      myLimit: limit,
+      myCounter: limit,
     },
     () => {
       console.log("Installed!");
@@ -23,45 +25,58 @@ chrome.runtime.onInstalled.addListener(() => {
   );
 });
 
-updateCounter(); // reset counter to limit (local storage)
-
-// set values from storage
-chrome.storage.local.get(["myState"], (result) => {
-  myState = result.myState;
-  setIcon(myState);
-  if (myState) play();
+// get values from storage
+chrome.storage.local.get(["myCounter", "myState", "myLimit"], (result) => {
+  counter = result.myCounter;
+  active = result.myState;
+  limit = result.myLimit;
+  setIcon(active);
+  if (active) play();
 });
 // listen to state changes
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === "local") {
     if (changes.myState) {
-      myState = changes.myState.newValue;
-      handleState(myState);
+      active = changes.myState.newValue;
+      handleState(active);
     }
   }
 });
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.msg === "reset") reset();
+  if (request.msg === "plus") incrementLimit();
+  if (request.msg === "minus") decrementLimit();
   sendResponse(null);
 });
 
 // handle counter
-function decrement() {
-  myCounter > 0 ? myCounter-- : delay();
+function decrementCounter() {
+  counter > 0 ? counter-- : delay();
   updateCounter();
 }
-// update counter in storage
+// update storage values
 function updateCounter() {
   chrome.storage.local.set({
-    myCounter: myCounter,
+    myCounter: counter,
   });
+}
+function updateLimit() {
+  chrome.storage.local.set(
+    {
+      myLimit: limit,
+    },
+    () => {
+      counter = limit;
+      updateCounter();
+    }
+  );
 }
 // restart the counter
 function play() {
   clearTimeout(timeout);
-  myCounter = limit;
+  counter = limit;
   updateCounter();
-  if (myState) loop = setInterval(decrement, 1000);
+  if (active) loop = setInterval(decrementCounter, 1000);
 }
 // delay the counter
 function delay() {
@@ -77,14 +92,14 @@ function reset() {
 function handleState(state) {
   if (!state) {
     clearInterval(loop);
-    if (!myCounter) {
+    if (!counter) {
       clearTimeout(timeout);
-      myCounter = limit;
+      counter = limit;
       updateCounter();
     }
   } else {
     updateCounter();
-    loop = setInterval(decrement, 1000);
+    loop = setInterval(decrementCounter, 1000);
   }
 }
 // toggle icon
@@ -118,4 +133,12 @@ function randomPos() {
   let rw = Math.floor(Math.random() * w - promptWidth) + promptWidth;
   let rh = Math.floor(Math.random() * h - promptWidth) + promptWidth;
   return { w: rw, h: rh };
+}
+function incrementLimit() {
+  limit += step;
+  updateLimit();
+}
+function decrementLimit() {
+  limit > step ? (limit -= step) : (limit = step);
+  updateLimit();
 }

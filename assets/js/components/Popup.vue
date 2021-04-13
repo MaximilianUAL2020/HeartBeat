@@ -4,14 +4,27 @@
     <div
       id="timer-wrapper"
       class="center border"
-      :class="{ disabled: !counter || !this.state }"
+      :class="{ disabled: !counter || !active }"
     >
       <span id="timer">{{ min + " : " + sec }}</span>
     </div>
-    <!-- buttons -->
+    <!-- edit -->
     <div class="row">
-      <button :disabled="!counter" @click="reset">Reset</button>
-      <button :disabled="!counter">Settings</button>
+      <button :disabled="counter != limit || active" @click="edit(true)">
+        +
+      </button>
+      <button
+        :disabled="counter != limit || counter == step || active"
+        @click="edit(false)"
+      >
+        -
+      </button>
+    </div>
+    <!-- reset -->
+    <div>
+      <button :disabled="!counter || counter == limit" @click="reset">
+        Reset
+      </button>
     </div>
     <!-- toggle -->
     <div class="switch">
@@ -20,7 +33,7 @@
         type="checkbox"
         class="switch-checkbox"
         @click="toggle"
-        v-model="state"
+        v-model="active"
       />
       <label class="switch-label" for="my-switch"></label>
     </div>
@@ -31,8 +44,10 @@
 export default {
   data() {
     return {
+      limit: 0,
+      step: 300,
       counter: 0,
-      state: false,
+      active: false,
       icons: {
         active: "icons/48-on.png",
         inactive: "icons/48-off.png",
@@ -41,20 +56,25 @@ export default {
   },
   methods: {
     toggle() {
-      this.state = !this.state;
+      this.active = !this.active;
       chrome.storage.local.set(
         {
-          myState: this.state,
+          myState: this.active,
         },
         () => {
           chrome.browserAction.setIcon({
-            path: this.icons[this.state ? "active" : "inactive"],
+            path: this.icons[this.active ? "active" : "inactive"],
           });
         }
       );
     },
     reset() {
       chrome.runtime.sendMessage({ msg: "reset" }, (res) => {
+        return;
+      });
+    },
+    edit(bool) {
+      chrome.runtime.sendMessage({ msg: bool ? "plus" : "minus" }, (res) => {
         return;
       });
     },
@@ -71,15 +91,19 @@ export default {
   },
   created() {
     // set values from storage
-    chrome.storage.local.get(["myCounter", "myState"], (result) => {
+    chrome.storage.local.get(["myCounter", "myState", "myLimit"], (result) => {
       this.counter = result.myCounter;
-      this.state = result.myState;
+      this.active = result.myState;
+      this.limit = result.myLimit;
     });
     // listen to counter changes
     chrome.storage.onChanged.addListener((changes, namespace) => {
       if (namespace === "local") {
         if (changes.myCounter) {
           this.counter = changes.myCounter.newValue;
+        }
+        if (changes.myLimit) {
+          this.limit = changes.myLimit.newValue;
         }
       }
     });
@@ -96,15 +120,15 @@ export default {
   display: grid;
   background-color: var(--dark-grey);
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: auto auto auto auto var(--master-height) var(
+  grid-template-rows: auto auto auto var(--master-height) var(--master-height) var(
       --master-height
     );
   grid-template-areas:
     "timer timer timer timer"
     "timer timer timer timer"
     "timer timer timer timer"
-    "timer timer timer timer"
-    "buttons buttons buttons buttons"
+    "edit edit edit edit"
+    "reset reset reset reset"
     "toggle toggle toggle toggle";
 }
 .center {
@@ -137,10 +161,14 @@ export default {
   border-radius: 20px;
 }
 .main-wrapper div:nth-of-type(2) {
-  grid-area: buttons;
+  grid-area: edit;
   border-radius: 100px;
 }
 .main-wrapper div:nth-of-type(3) {
+  grid-area: reset;
+  border-radius: 100px;
+}
+.main-wrapper div:nth-of-type(4) {
   grid-area: toggle;
   position: relative;
   border: none;
