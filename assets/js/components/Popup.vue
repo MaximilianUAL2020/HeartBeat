@@ -91,14 +91,14 @@ export default {
   },
   created() {
     // set values from storage
-    chrome.storage.local.get(["myCounter", "myState", "myLimit"], (result) => {
+    chrome.storage.local.get(["myState", "myLimit", "myCounter"], (result) => {
       this.counter = result.myCounter;
       this.active = result.myState;
       this.limit = result.myLimit;
     });
     // listen to counter changes
     chrome.storage.onChanged.addListener((changes, namespace) => {
-      if (namespace === "local") {
+      if (namespace == "local") {
         if (changes.myCounter) {
           this.counter = changes.myCounter.newValue;
         }

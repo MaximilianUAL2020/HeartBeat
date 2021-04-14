@@ -1,11 +1,8 @@
 let loop;
 let timeout;
+let window = 400;
 const step = 300;
 const pause = 20000;
-let limit = 1200;
-let promptWidth = 400;
-let active = false;
-let counter = limit;
 
 const icons = {
   active: "../icons/48-on.png",
@@ -13,20 +10,17 @@ const icons = {
 };
 
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.local.set(
-    {
-      myState: false,
-      myLimit: limit,
-      myCounter: limit,
-    },
-    () => {
-      console.log("Installed!");
-    }
-  );
+  chrome.storage.local.set({
+    myState: false,
+    myLimit: step * 4,
+    myCounter: step * 4,
+  });
 });
 
+let counter, active, limit;
+
 // get values from storage
-chrome.storage.local.get(["myCounter", "myState", "myLimit"], (result) => {
+chrome.storage.local.get(["myState", "myLimit", "myCounter"], (result) => {
   counter = result.myCounter;
   active = result.myState;
   limit = result.myLimit;
@@ -35,7 +29,7 @@ chrome.storage.local.get(["myCounter", "myState", "myLimit"], (result) => {
 });
 // listen to state changes
 chrome.storage.onChanged.addListener((changes, namespace) => {
-  if (namespace === "local") {
+  if (namespace == "local") {
     if (changes.myState) {
       active = changes.myState.newValue;
       handleState(active);
@@ -43,9 +37,13 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
   }
 });
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.msg === "reset") reset();
-  if (request.msg === "plus") incrementLimit();
-  if (request.msg === "minus") decrementLimit();
+  if (request.msg == "reset") {
+    reset();
+  } else if (request.msg == "plus") {
+    incrementLimit();
+  } else if (request.msg == "minus") {
+    decrementLimit();
+  }
   sendResponse(null);
 });
 
@@ -53,23 +51,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 function decrementCounter() {
   counter > 0 ? counter-- : delay();
   updateCounter();
-}
-// update storage values
-function updateCounter() {
-  chrome.storage.local.set({
-    myCounter: counter,
-  });
-}
-function updateLimit() {
-  chrome.storage.local.set(
-    {
-      myLimit: limit,
-    },
-    () => {
-      counter = limit;
-      updateCounter();
-    }
-  );
 }
 // restart the counter
 function play() {
@@ -87,6 +68,35 @@ function delay() {
 function reset() {
   clearInterval(loop);
   play();
+}
+// update storage values
+function updateCounter() {
+  chrome.storage.local.set({
+    myCounter: counter,
+  });
+}
+function updateLimit() {
+  chrome.storage.local.set(
+    {
+      myLimit: limit,
+      myCounter: limit,
+    },
+    () => {
+      counter = limit;
+    }
+  );
+}
+function incrementLimit() {
+  limit += step;
+  updateLimit();
+}
+function decrementLimit() {
+  if (limit > step) {
+    limit -= step;
+    updateLimit();
+  } else {
+    return;
+  }
 }
 // toggle the counter
 function handleState(state) {
@@ -115,8 +125,8 @@ function newWindow() {
     {
       top: pos.h,
       left: pos.w,
-      width: promptWidth,
-      height: promptWidth,
+      width: window,
+      height: window,
       type: "popup",
       state: "normal",
       url: chrome.runtime.getURL("prompt.html"),
@@ -130,15 +140,7 @@ function newWindow() {
 function randomPos() {
   let w = screen.width;
   let h = screen.height;
-  let rw = Math.floor(Math.random() * w - promptWidth) + promptWidth;
-  let rh = Math.floor(Math.random() * h - promptWidth) + promptWidth;
+  let rw = Math.floor(Math.random() * w - window) + window;
+  let rh = Math.floor(Math.random() * h - window) + window;
   return { w: rw, h: rh };
-}
-function incrementLimit() {
-  limit += step;
-  updateLimit();
-}
-function decrementLimit() {
-  limit > step ? (limit -= step) : (limit = step);
-  updateLimit();
 }

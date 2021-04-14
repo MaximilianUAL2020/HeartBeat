@@ -9,12 +9,9 @@
 
 var loop;
 var timeout;
+var window = 400;
 var step = 300;
-var pause = 20000;
-var limit = 1200;
-var promptWidth = 400;
-var active = false;
-var counter = limit;
+var pause = 5000;
 var icons = {
   active: "../icons/48-on.png",
   inactive: "../icons/48-off.png"
@@ -22,14 +19,13 @@ var icons = {
 chrome.runtime.onInstalled.addListener(function () {
   chrome.storage.local.set({
     myState: false,
-    myLimit: limit,
-    myCounter: limit
-  }, function () {
-    console.log("Installed!");
+    myLimit: step * 4,
+    myCounter: step * 4
   });
-}); // get values from storage
+});
+var counter, active, limit; // get values from storage
 
-chrome.storage.local.get(["myCounter", "myState", "myLimit"], function (result) {
+chrome.storage.local.get(["myState", "myLimit", "myCounter"], function (result) {
   counter = result.myCounter;
   active = result.myState;
   limit = result.myLimit;
@@ -38,7 +34,7 @@ chrome.storage.local.get(["myCounter", "myState", "myLimit"], function (result) 
 }); // listen to state changes
 
 chrome.storage.onChanged.addListener(function (changes, namespace) {
-  if (namespace === "local") {
+  if (namespace == "local") {
     if (changes.myState) {
       active = changes.myState.newValue;
       handleState(active);
@@ -46,31 +42,20 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
   }
 });
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.msg === "reset") reset();
-  if (request.msg === "plus") incrementLimit();
-  if (request.msg === "minus") decrementLimit();
+  if (request.msg == "reset") {
+    reset();
+  } else if (request.msg == "plus") {
+    incrementLimit();
+  } else if (request.msg == "minus") {
+    decrementLimit();
+  }
+
   sendResponse(null);
 }); // handle counter
 
 function decrementCounter() {
   counter > 0 ? counter-- : delay();
   updateCounter();
-} // update storage values
-
-
-function updateCounter() {
-  chrome.storage.local.set({
-    myCounter: counter
-  });
-}
-
-function updateLimit() {
-  chrome.storage.local.set({
-    myLimit: limit
-  }, function () {
-    counter = limit;
-    updateCounter();
-  });
 } // restart the counter
 
 
@@ -91,6 +76,36 @@ function delay() {
 function reset() {
   clearInterval(loop);
   play();
+} // update storage values
+
+
+function updateCounter() {
+  chrome.storage.local.set({
+    myCounter: counter
+  });
+}
+
+function updateLimit() {
+  chrome.storage.local.set({
+    myLimit: limit,
+    myCounter: limit
+  }, function () {
+    counter = limit;
+  });
+}
+
+function incrementLimit() {
+  limit += step;
+  updateLimit();
+}
+
+function decrementLimit() {
+  if (limit > step) {
+    limit -= step;
+    updateLimit();
+  } else {
+    return;
+  }
 } // toggle the counter
 
 
@@ -122,8 +137,8 @@ function newWindow() {
   chrome.windows.create({
     top: pos.h,
     left: pos.w,
-    width: promptWidth,
-    height: promptWidth,
+    width: window,
+    height: window,
     type: "popup",
     state: "normal",
     url: chrome.runtime.getURL("prompt.html")
@@ -136,22 +151,12 @@ function newWindow() {
 function randomPos() {
   var w = screen.width;
   var h = screen.height;
-  var rw = Math.floor(Math.random() * w - promptWidth) + promptWidth;
-  var rh = Math.floor(Math.random() * h - promptWidth) + promptWidth;
+  var rw = Math.floor(Math.random() * w - window) + window;
+  var rh = Math.floor(Math.random() * h - window) + window;
   return {
     w: rw,
     h: rh
   };
-}
-
-function incrementLimit() {
-  limit += step;
-  updateLimit();
-}
-
-function decrementLimit() {
-  limit > step ? limit -= step : limit = step;
-  updateLimit();
 }
 
 /***/ }),
