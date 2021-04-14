@@ -109,7 +109,7 @@ __webpack_require__.r(__webpack_exports__);
     var _this2 = this;
 
     // set values from storage
-    chrome.storage.local.get(["myState", "myLimit", "myCounter"], function (result) {
+    chrome.storage.local.get(["myCounter", "myState", "myLimit"], function (result) {
       _this2.counter = result.myCounter;
       _this2.active = result.myState;
       _this2.limit = result.myLimit;

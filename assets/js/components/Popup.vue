@@ -91,7 +91,7 @@ export default {
   },
   created() {
     // set values from storage
-    chrome.storage.local.get(["myState", "myLimit", "myCounter"], (result) => {
+    chrome.storage.local.get(["myCounter", "myState", "myLimit"], (result) => {
       this.counter = result.myCounter;
       this.active = result.myState;
       this.limit = result.myLimit;

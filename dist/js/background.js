@@ -11,7 +11,7 @@ var loop;
 var timeout;
 var window = 400;
 var step = 300;
-var pause = 5000;
+var pause = 20000;
 var icons = {
   active: "../icons/48-on.png",
   inactive: "../icons/48-off.png"
@@ -25,12 +25,12 @@ chrome.runtime.onInstalled.addListener(function () {
 });
 var counter, active, limit; // get values from storage
 
-chrome.storage.local.get(["myState", "myLimit", "myCounter"], function (result) {
+chrome.storage.local.get(["myCounter", "myState", "myLimit"], function (result) {
   counter = result.myCounter;
   active = result.myState;
   limit = result.myLimit;
   setIcon(active);
-  if (active) play();
+  if (active) setCounter();
 }); // listen to state changes
 
 chrome.storage.onChanged.addListener(function (changes, namespace) {
@@ -43,39 +43,45 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 });
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.msg == "reset") {
-    reset();
+    clearInterval(loop);
+    setCounter();
   } else if (request.msg == "plus") {
-    incrementLimit();
+    incLimit();
   } else if (request.msg == "minus") {
-    decrementLimit();
+    decLimit();
   }
 
   sendResponse(null);
-}); // handle counter
+}); // run the counter
 
-function decrementCounter() {
-  counter > 0 ? counter-- : delay();
+function runCounter() {
+  counter > 0 ? counter-- : prompt();
   updateCounter();
-} // restart the counter
+} // start the counter
 
 
-function play() {
+function setCounter() {
   clearTimeout(timeout);
   counter = limit;
   updateCounter();
-  if (active) loop = setInterval(decrementCounter, 1000);
-} // delay the counter
+  if (active) loop = setInterval(runCounter, 1000);
+} // open new prompt
 
 
-function delay() {
+function prompt() {
   clearInterval(loop);
-  newWindow();
-} // reset the counter
-
-
-function reset() {
-  clearInterval(loop);
-  play();
+  var pos = randomPos();
+  chrome.windows.create({
+    top: pos.h,
+    left: pos.w,
+    width: window,
+    height: window,
+    type: "popup",
+    state: "normal",
+    url: chrome.runtime.getURL("prompt.html")
+  }, function () {
+    timeout = setTimeout(setCounter, pause);
+  });
 } // update storage values
 
 
@@ -94,12 +100,12 @@ function updateLimit() {
   });
 }
 
-function incrementLimit() {
+function incLimit() {
   limit += step;
   updateLimit();
 }
 
-function decrementLimit() {
+function decLimit() {
   if (limit > step) {
     limit -= step;
     updateLimit();
@@ -109,8 +115,8 @@ function decrementLimit() {
 } // toggle the counter
 
 
-function handleState(state) {
-  if (!state) {
+function handleState(active) {
+  if (!active) {
     clearInterval(loop);
 
     if (!counter) {
@@ -120,7 +126,7 @@ function handleState(state) {
     }
   } else {
     updateCounter();
-    loop = setInterval(decrementCounter, 1000);
+    loop = setInterval(runCounter, 1000);
   }
 } // toggle icon
 
@@ -128,22 +134,6 @@ function handleState(state) {
 function setIcon(bool) {
   chrome.browserAction.setIcon({
     path: icons[bool ? "active" : "inactive"]
-  });
-} // create popup window
-
-
-function newWindow() {
-  var pos = randomPos();
-  chrome.windows.create({
-    top: pos.h,
-    left: pos.w,
-    width: window,
-    height: window,
-    type: "popup",
-    state: "normal",
-    url: chrome.runtime.getURL("prompt.html")
-  }, function () {
-    timeout = setTimeout(play, pause);
   });
 } //generate random position
 
