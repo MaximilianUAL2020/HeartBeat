@@ -12,21 +12,26 @@ var timeout;
 var window = 400;
 var step = 300;
 var pause = 20000;
+var init = step * 4;
 var icons = {
   active: "../icons/48-on.png",
   inactive: "../icons/48-off.png"
 };
+var counter, active, limit;
 chrome.runtime.onInstalled.addListener(function () {
   chrome.storage.local.set({
     myState: false,
-    myLimit: step * 4,
-    myCounter: step * 4
+    myLimit: init,
+    myCounter: init
+  }, function () {
+    state = false;
+    limit = init;
+    counter = init;
   });
-});
-var counter, active, limit; // get values from storage
+}); // get values from storage
 
 chrome.storage.local.get(["myCounter", "myState", "myLimit"], function (result) {
-  counter = result.myCounter;
+  counter = result.myState ? result.myCounter : result.myLimit;
   active = result.myState;
   limit = result.myLimit;
   setIcon(active);
@@ -52,19 +57,19 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
 
   sendResponse(null);
-}); // run the counter
-
-function runCounter() {
-  counter > 0 ? counter-- : prompt();
-  updateCounter();
-} // start the counter
-
+}); // start the counter
 
 function setCounter() {
   clearTimeout(timeout);
   counter = limit;
   updateCounter();
   if (active) loop = setInterval(runCounter, 1000);
+} // run the counter
+
+
+function runCounter() {
+  counter > 0 ? counter-- : prompt();
+  updateCounter();
 } // open new prompt
 
 

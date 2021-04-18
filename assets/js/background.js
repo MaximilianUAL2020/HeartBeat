@@ -3,24 +3,32 @@ let timeout;
 let window = 400;
 const step = 300;
 const pause = 20000;
+const init = step * 4;
 const icons = {
   active: "../icons/48-on.png",
   inactive: "../icons/48-off.png",
 };
 
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.local.set({
-    myState: false,
-    myLimit: step * 4,
-    myCounter: step * 4,
-  });
-});
-
 let counter, active, limit;
+
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.storage.local.set(
+    {
+      myState: false,
+      myLimit: init,
+      myCounter: init,
+    },
+    () => {
+      state = false;
+      limit = init;
+      counter = init;
+    }
+  );
+});
 
 // get values from storage
 chrome.storage.local.get(["myCounter", "myState", "myLimit"], (result) => {
-  counter = result.myCounter;
+  counter = result.myState ? result.myCounter : result.myLimit;
   active = result.myState;
   limit = result.myLimit;
   setIcon(active);
@@ -47,17 +55,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   sendResponse(null);
 });
 
-// run the counter
-function runCounter() {
-  counter > 0 ? counter-- : prompt();
-  updateCounter();
-}
 // start the counter
 function setCounter() {
   clearTimeout(timeout);
   counter = limit;
   updateCounter();
   if (active) loop = setInterval(runCounter, 1000);
+}
+// run the counter
+function runCounter() {
+  counter > 0 ? counter-- : prompt();
+  updateCounter();
 }
 // open new prompt
 function prompt() {

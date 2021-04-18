@@ -110,7 +110,7 @@ __webpack_require__.r(__webpack_exports__);
 
     // set values from storage
     chrome.storage.local.get(["myCounter", "myState", "myLimit"], function (result) {
-      _this2.counter = result.myCounter;
+      _this2.counter = result.myState ? result.myCounter : result.myLimit;
       _this2.active = result.myState;
       _this2.limit = result.myLimit;
     }); // listen to counter changes
