@@ -30,6 +30,11 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
       step = limit / 5;
     }
 
+    if (changes.myState) {
+      active = changes.myState.newValue;
+      document.getElementById("heart-wrapper").classList.toggle("hide");
+    }
+
     checkStep();
   }
 }); // set health
@@ -53,6 +58,7 @@ function setImage() {
 
 function mountBar() {
   parent.appendChild(child);
+  if (!active) parent.classList.add("hide");
   document.body.appendChild(parent);
 }
 /******/ })()
