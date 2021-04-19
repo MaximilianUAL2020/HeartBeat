@@ -9,5 +9,6 @@ mix
   .js("assets/js/background.js", "dist/js")
   .js("assets/js/content.js", "dist/js")
   .js("assets/js/popup.js", "dist/js")
+  .js("assets/js/prompt.js", "dist/js")
   .vue()
   .options({ processCssUrls: false });

@@ -2,6 +2,7 @@
     "/dist/js/background.js": "/dist/js/background.js",
     "/dist/js/content.js": "/dist/js/content.js",
     "/dist/js/popup.js": "/dist/js/popup.js",
+    "/dist/js/prompt.js": "/dist/js/prompt.js",
     "/dist/css/style.css": "/dist/css/style.css",
     "/dist/css/prompt.css": "/dist/css/prompt.css",
     "/dist/css/popup.css": "/dist/css/popup.css",

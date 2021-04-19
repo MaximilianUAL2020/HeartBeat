@@ -2,7 +2,7 @@ let loop;
 let timeout;
 let window = 400;
 const step = 300;
-const pause = 20000;
+const pause = 60000;
 const init = step * 4;
 const icons = {
   active: "../icons/48-on.png",
@@ -26,7 +26,6 @@ chrome.runtime.onInstalled.addListener(() => {
     }
   );
 });
-
 // get values from storage
 chrome.storage.local.get(["myCounter", "myState", "myLimit"], (result) => {
   counter = result.myCounter;

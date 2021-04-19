@@ -11,7 +11,7 @@ var loop;
 var timeout;
 var window = 400;
 var step = 300;
-var pause = 20000;
+var pause = 60000;
 var init = step * 4;
 var icons = {
   active: "../icons/48-on.png",
