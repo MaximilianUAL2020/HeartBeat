@@ -1,10 +1,12 @@
 #heart-wrapper {
   left: 0;
   bottom: 0;
-  width: 20%;
-  padding: 1em;
+  width: 250px;
   height: auto;
-  position: absolute;
+  padding: 1em;
+  position: fixed;
+  z-index: 100000000000000000000000000000000;
+  filter: drop-shadow(0 0 10px black);
 }
 #heart {
   width: 100%;
