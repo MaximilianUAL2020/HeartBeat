@@ -1,0 +1,13 @@
+#heart-wrapper {
+  left: 0;
+  bottom: 0;
+  width: 20%;
+  padding: 1em;
+  height: auto;
+  position: absolute;
+}
+#heart {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}

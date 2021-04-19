@@ -3,11 +3,11 @@ var __webpack_exports__ = {};
 /*!******************************!*\
   !*** ./assets/js/content.js ***!
   \******************************/
-// 1. Add image to DOM
-// 2. Get counter on load
-// 3. Get counter on stage change
-// 4. Set icon according to elapsed time
-var counter, active, limit, step; // get values from storage
+var counter, active, limit, step;
+var parent = document.createElement("div");
+var child = document.createElement("img");
+parent.id = "heart-wrapper";
+child.id = "heart"; // get values from storage
 
 chrome.storage.local.get(["myCounter", "myState", "myLimit"], function (result) {
   counter = result.myState ? result.myCounter : result.myLimit;
@@ -15,6 +15,7 @@ chrome.storage.local.get(["myCounter", "myState", "myLimit"], function (result) 
   limit = result.myLimit;
   step = limit / 5;
   checkStep();
+  mountBar();
 }); // listen to counter changes
 
 chrome.storage.onChanged.addListener(function (changes, namespace) {
@@ -35,7 +36,14 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
 function checkStep() {
   if (counter % step) return;
   var index = counter / step;
-  console.log(index);
+  var url = chrome.runtime.getURL("icons/heart_".concat(index, ".png"));
+  child.src = url;
+} // mount health bar
+
+
+function mountBar() {
+  parent.appendChild(child);
+  document.body.appendChild(parent);
 }
 /******/ })()
 ;

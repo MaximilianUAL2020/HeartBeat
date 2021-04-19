@@ -10,6 +10,7 @@
   },
   "content_scripts": [
     {
+      "css": ["css/style.css"],
       "js": ["js/content.js"],
       "matches": ["<all_urls>"],
       "run_at": "document_start"
@@ -18,7 +19,16 @@
   "background": {
     "scripts": ["js/background.js"]
   },
-  "web_accessible_resources": ["css/prompt.css", "prompt.html"],
+  "web_accessible_resources": [
+    "css/prompt.css",
+    "prompt.html",
+    "icons/heart_0.png",
+    "icons/heart_1.png",
+    "icons/heart_2.png",
+    "icons/heart_3.png",
+    "icons/heart_4.png",
+    "icons/heart_5.png"
+  ],
   "browser_action": {
     "default_popup": "popup.html",
     "default_icon": "icons/48-off.png"
