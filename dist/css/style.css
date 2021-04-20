@@ -1,7 +1,7 @@
 :root {
-  --bg: #d1d1d1;
-  --medium: #c6737d;
-  --light: #bb1528;
+  --bg: rgb(209, 209, 209);
+  --medium: rgb(198, 115, 125);
+  --light: rgb(187, 21, 40);
 }
 * {
   user-select: none;
@@ -24,7 +24,7 @@
   border-radius: 20px !important;
   pointer-events: none !important;
   background: var(--bg) !important;
-  filter: drop-shadow(0 0 10px black) !important;
+  filter: drop-shadow(0 0 5px black) !important;
   z-index: 100000000000000000000000000000000 !important;
 }
 #heart {

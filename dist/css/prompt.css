@@ -1,7 +1,7 @@
 :root {
-  --bg: #d1d1d1;
-  --medium: #c6737d;
-  --light: #bb1528;
+  --bg: rgb(209, 209, 209);
+  --medium: rgb(198, 115, 125);
+  --light: rgb(187, 21, 40);
 }
 * {
   /* font-size: 1.2em;
