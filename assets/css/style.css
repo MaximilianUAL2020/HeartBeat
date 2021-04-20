@@ -1,12 +1,29 @@
+:root {
+  --bg: #d1d1d1;
+  --medium: #c6737d;
+  --light: #bb1528;
+}
+* {
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
 #heart-wrapper {
-  display: block;
-  left: 0 !important;
-  bottom: 0 !important;
+  display: flex;
+  padding: 1em !important;
+  align-items: center !important;
+  justify-content: center !important;
+  left: 20px !important;
+  bottom: 20px !important;
   width: 250px !important;
   height: auto !important;
-  padding: 1em !important;
   position: fixed !important;
+  border-radius: 20px !important;
   pointer-events: none !important;
+  background: var(--bg) !important;
   filter: drop-shadow(0 0 10px black) !important;
   z-index: 100000000000000000000000000000000 !important;
 }

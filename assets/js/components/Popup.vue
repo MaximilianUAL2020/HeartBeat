@@ -1,5 +1,5 @@
 <template>
-  <div class="main-wrapper">
+  <div class="main-wrapper no-select">
     <!-- timer -->
     <div
       id="timer-wrapper"
@@ -187,6 +187,14 @@ export default {
   font-size: 3em;
   border: none !important;
   transition: all 0.2s;
+}
+.no-select {
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 button,
 button:focus,

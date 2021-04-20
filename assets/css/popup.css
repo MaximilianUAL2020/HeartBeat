@@ -4,9 +4,9 @@
   --master-height: 60px;
   --button-height: calc(var(--master-height) - calc(var(--myPadding) * 2));
   --button-end: calc(100% - calc(var(--button-height) + var(--myPadding)));
-  --bg: #bb1528;
-  --medium: #b87b82;
-  --light: #b6b6b6;
+  --bg: #d1d1d1;
+  --medium: #c6737d;
+  --light: #bb1528;
 }
 * {
   font-size: 16px;
