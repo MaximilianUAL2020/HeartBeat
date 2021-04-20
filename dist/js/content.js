@@ -9,11 +9,10 @@ var child = document.createElement("img");
 parent.id = "heart-wrapper";
 child.id = "heart"; // get values from storage
 
-chrome.storage.local.get(["myCounter", "myState", "myLimit", "myIndex"], function (result) {
+chrome.storage.local.get(["myCounter", "myState", "myLimit"], function (result) {
   counter = result.myCounter;
   active = result.myState;
   limit = result.myLimit;
-  index = result.myIndex;
   step = limit / 5;
   setImage();
   mountBar();
@@ -35,22 +34,12 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
       document.getElementById("heart-wrapper").classList.toggle("hide");
     }
 
-    checkStep();
+    setImage();
   }
 }); // set health
 
-function checkStep() {
-  if (counter % step) return;
-  index = counter / step;
-  chrome.storage.local.set({
-    myIndex: index
-  }, function () {
-    setImage();
-  });
-} // set image url
-
-
 function setImage() {
+  index = Math.ceil(counter / step);
   var url = chrome.runtime.getURL("icons/heart_".concat(index, ".png"));
   child.src = url;
 } // mount health bar

@@ -118,7 +118,7 @@ export default {
   height: 100%;
   padding: 1em;
   display: grid;
-  background-color: var(--dark-grey);
+  background-color: var(--bg);
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: auto auto auto var(--master-height) var(--master-height) var(
       --master-height
@@ -143,13 +143,13 @@ export default {
 }
 .border {
   background: transparent;
-  color: var(--light-grey);
-  border: 1px solid var(--light-grey);
+  color: var(--light);
+  border: 1px solid var(--light);
 }
 .filled {
   border: none;
-  color: var(--dark-grey);
-  background: var(--light-grey);
+  color: var(--bg);
+  background: var(--light);
 }
 .main-wrapper div {
   width: 100%;
@@ -177,8 +177,8 @@ export default {
   border: none !important;
 }
 .disabled {
-  color: var(--medium-grey);
-  border: 1px solid var(--medium-grey);
+  color: var(--medium);
+  border: 1px solid var(--medium);
   transition: all 0.2s;
 }
 #timer {
@@ -198,23 +198,23 @@ button:active {
   cursor: pointer;
   border-radius: inherit;
   background-color: transparent;
-  color: var(--dark-greygrey);
-  background: var(--light-grey);
-  border: 1px solid var(--dark-grey);
+  color: var(--bg);
+  background: var(--light);
+  border: 1px solid var(--bg);
   transition: all 0.2s;
 }
 button:hover {
   cursor: pointer;
   background: transparent;
-  color: var(--light-grey);
-  border: 1px solid var(--light-grey);
+  color: var(--light);
+  border: 1px solid var(--light);
   transition: all 0.2s;
 }
 button:disabled {
   cursor: not-allowed;
   background: transparent;
-  color: var(--medium-grey);
-  border: 1px solid var(--medium-grey);
+  color: var(--medium);
+  border: 1px solid var(--medium);
 }
 .switch-checkbox {
   opacity: 0;
@@ -229,7 +229,7 @@ button:disabled {
   height: var(--master-height);
   line-height: var(--master-height);
   border-radius: var(--master-height);
-  border: 1px solid var(--light-grey);
+  border: 1px solid var(--light);
   transition: all 0.2s;
 }
 .switch-label:before {
@@ -243,14 +243,14 @@ button:disabled {
   right: var(--button-end);
   width: var(--button-height);
   height: var(--button-height);
-  background: var(--light-grey);
+  background: var(--light);
   transition: all 0.2s;
 }
 .switch-checkbox:checked + .switch-label {
-  background: var(--light-grey);
+  background: var(--light);
 }
 .switch-checkbox:checked + .switch-label:before {
   right: var(--myPadding);
-  background: var(--dark-grey);
+  background: var(--bg);
 }
 </style>

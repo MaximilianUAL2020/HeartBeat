@@ -20,7 +20,6 @@ var icons = {
 var counter, active, limit;
 chrome.runtime.onInstalled.addListener(function () {
   chrome.storage.local.set({
-    myIndex: 5,
     myState: false,
     myLimit: init,
     myCounter: init
@@ -99,7 +98,6 @@ function updateCounter() {
 
 function updateLimit() {
   chrome.storage.local.set({
-    myIndex: 5,
     myLimit: limit,
     myCounter: limit
   }, function () {

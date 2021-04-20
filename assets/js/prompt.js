@@ -6,7 +6,7 @@ let counter = 0;
 let image = document.getElementById("heart");
 
 setInterval(() => {
-  counter < limit ? counter++ : window.close();
+  counter < limit - 1 ? counter++ : window.close();
   let url = chrome.runtime.getURL(`icons/heart_${counter}.png`);
   image.src = url;
 }, step);
