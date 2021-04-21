@@ -348,7 +348,7 @@ var render = function() {
       },
       [
         _c("span", { attrs: { id: "timer" } }, [
-          _vm._v(_vm._s(_vm.min + " : " + _vm.sec))
+          _vm._v(_vm._s(_vm.min + ":" + _vm.sec))
         ])
       ]
     ),

@@ -1,3 +1,7 @@
+@font-face {
+  font-family: Space-Mono;
+  src: url("../ttf/Space.ttf");
+}
 :root {
   --myPadding: 8px;
   --master-width: 100%;
@@ -12,8 +16,8 @@
   font-size: 16px;
   scrollbar-width: none;
   box-sizing: border-box;
+  font-family: Space-Mono;
   -ms-overflow-style: none;
-  font-family: Arial, Helvetica, sans-serif;
 }
 body {
   margin: 0;

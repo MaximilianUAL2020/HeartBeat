@@ -6,7 +6,7 @@
       class="center border"
       :class="{ disabled: !counter || !active }"
     >
-      <span id="timer">{{ min + " : " + sec }}</span>
+      <span id="timer">{{ min + ":" + sec }}</span>
     </div>
     <!-- edit -->
     <div class="row">
