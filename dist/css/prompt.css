@@ -1,7 +1,7 @@
 :root {
   --bg: rgb(209, 209, 209);
-  --medium: rgb(198, 115, 125);
-  --light: rgb(187, 21, 40);
+  --medium: rgb(212, 124, 133);
+  --light: rgb(215, 38, 56);
 }
 * {
   /* font-size: 1.2em;
@@ -37,6 +37,5 @@ img {
   width: 50%;
   height: auto;
   -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
-

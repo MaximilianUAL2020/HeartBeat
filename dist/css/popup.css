@@ -9,8 +9,8 @@
   --button-height: calc(var(--master-height) - calc(var(--myPadding) * 2));
   --button-end: calc(100% - calc(var(--button-height) + var(--myPadding)));
   --bg: rgb(209, 209, 209);
-  --medium: rgb(198, 115, 125);
-  --light: rgb(187, 21, 40);
+  --medium: rgb(212, 124, 133);
+  --light: rgb(215, 38, 56);
 }
 * {
   font-size: 16px;
@@ -24,4 +24,3 @@ body {
   width: 280px;
   height: 480px;
 }
-

@@ -1,14 +1,10 @@
 :root {
   --bg: rgb(209, 209, 209);
-  --medium: rgb(198, 115, 125);
-  --light: rgb(187, 21, 40);
+  --medium: rgb(212, 124, 133);
+  --light: rgb(215, 38, 56);
 }
 * {
-  /* font-size: 1.2em;
-  scrollbar-width: none;
   box-sizing: border-box;
-  -ms-overflow-style: none;
-  font-family: Arial, Helvetica, sans-serif; */
   user-select: none;
   -ms-user-select: none;
   -moz-user-select: none;
