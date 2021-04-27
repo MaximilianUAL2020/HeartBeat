@@ -3,8 +3,7 @@ let timeout;
 let window = 400;
 const step = 300;
 const pause = 60000;
-// const init = step * 4;
-const init = 5;
+const init = step * 4;
 const icons = {
   active: "../icons/48-on.png",
   inactive: "../icons/48-off.png",
