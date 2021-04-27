@@ -13,5 +13,12 @@ setInterval(function () {
   var url = chrome.runtime.getURL("icons/heart_".concat(counter, ".png"));
   image.src = url;
 }, step);
+window.addEventListener("beforeunload", function () {
+  chrome.runtime.sendMessage({
+    msg: "close"
+  }, function (res) {
+    return;
+  });
+});
 /******/ })()
 ;

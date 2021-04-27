@@ -10,3 +10,9 @@ setInterval(() => {
   let url = chrome.runtime.getURL(`icons/heart_${counter}.png`);
   image.src = url;
 }, step);
+
+window.addEventListener("beforeunload", () => {
+  chrome.runtime.sendMessage({ msg: "close" }, (res) => {
+    return;
+  });
+});

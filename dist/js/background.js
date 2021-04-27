@@ -11,8 +11,9 @@ var loop;
 var timeout;
 var window = 400;
 var step = 300;
-var pause = 60000;
-var init = step * 4;
+var pause = 60000; // const init = step * 4;
+
+var init = 5;
 var icons = {
   active: "../icons/48-on.png",
   inactive: "../icons/48-off.png"
@@ -47,7 +48,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
   }
 });
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.msg == "reset") {
+  if (request.msg == "reset" || request.msg == "close") {
     clearInterval(loop);
     setCounter();
   } else if (request.msg == "plus") {

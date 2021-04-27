@@ -3,7 +3,8 @@ let timeout;
 let window = 400;
 const step = 300;
 const pause = 60000;
-const init = step * 4;
+// const init = step * 4;
+const init = 5;
 const icons = {
   active: "../icons/48-on.png",
   inactive: "../icons/48-off.png",
@@ -43,7 +44,7 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
   }
 });
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.msg == "reset") {
+  if (request.msg == "reset" || request.msg == "close") {
     clearInterval(loop);
     setCounter();
   } else if (request.msg == "plus") {

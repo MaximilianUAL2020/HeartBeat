@@ -1,7 +1,7 @@
 {
-  "name": "210409_Build_1",
+  "name": "HeartBeat",
   "version": "1.0.0",
-  "description": "Learning to code chrome extensions!",
+  "description": "Remember to take breaks while browsing the web.",
   "permissions": ["tabs", "storage", "background", "unlimitedStorage"],
   "icons": {
     "16": "icons/16.png",
