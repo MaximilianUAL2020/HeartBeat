@@ -10,8 +10,8 @@
   },
   "content_scripts": [
     {
-      "css": ["css/style.css"],
       "js": ["js/content.js"],
+      "css": ["css/style.css"],
       "matches": ["<all_urls>"]
     }
   ],

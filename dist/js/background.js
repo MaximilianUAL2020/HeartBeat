@@ -39,7 +39,7 @@ chrome.storage.local.get(["myCounter", "myState", "myLimit"], function (result) 
 }); // listen to state changes
 
 chrome.storage.onChanged.addListener(function (changes, namespace) {
-  if (namespace == "local") {
+  if (namespace === "local") {
     if (changes.myState) {
       active = changes.myState.newValue;
       handleState(active);
@@ -47,12 +47,12 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
   }
 });
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request.msg == "reset" || request.msg == "close") {
+  if (request.msg === "reset" || request.msg === "close") {
     clearInterval(loop);
     setCounter();
-  } else if (request.msg == "plus") {
+  } else if (request.msg === "plus") {
     incLimit();
-  } else if (request.msg == "minus") {
+  } else if (request.msg === "minus") {
     decLimit();
   }
 
@@ -75,10 +75,9 @@ function runCounter() {
 
 function prompt() {
   clearInterval(loop);
-  var pos = randomPos();
   chrome.windows.create({
-    top: pos.h,
-    left: pos.w,
+    top: randomPos().h,
+    left: randomPos().w,
     width: window,
     height: window,
     type: "popup",
@@ -111,18 +110,16 @@ function incLimit() {
 }
 
 function decLimit() {
-  if (limit > step) {
-    limit -= step;
-    updateLimit();
-  } else {
-    return;
-  }
-} // toggle the counter
+  if (limit < step) return;
+  limit -= step;
+  updateLimit();
+} // play/pause
 
 
 function handleState(active) {
+  // pause if active
   if (!active) {
-    clearInterval(loop);
+    clearInterval(loop); // reset if break
 
     if (!counter) {
       clearTimeout(timeout);
@@ -130,6 +127,7 @@ function handleState(active) {
       updateCounter();
     }
   } else {
+    // resume countdown
     updateCounter();
     loop = setInterval(runCounter, 1000);
   }
@@ -169,10 +167,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./assets/css/prompt.css":
-/*!*******************************!*\
-  !*** ./assets/css/prompt.css ***!
-  \*******************************/
+/***/ "./assets/css/style.css":
+/*!******************************!*\
+  !*** ./assets/css/style.css ***!
+  \******************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -182,10 +180,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./assets/css/style.css":
-/*!******************************!*\
-  !*** ./assets/css/style.css ***!
-  \******************************/
+/***/ "./assets/css/prompt.css":
+/*!*******************************!*\
+  !*** ./assets/css/prompt.css ***!
+  \*******************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -281,8 +279,8 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
 /******/ 		var installedChunks = {
 /******/ 			"/dist/js/background": 0,
-/******/ 			"dist/css/style": 0,
 /******/ 			"dist/css/prompt": 0,
+/******/ 			"dist/css/style": 0,
 /******/ 			"dist/css/popup": 0
 /******/ 		};
 /******/ 		
@@ -331,10 +329,10 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["dist/css/style","dist/css/prompt","dist/css/popup"], () => (__webpack_require__("./assets/js/background.js")))
-/******/ 	__webpack_require__.O(undefined, ["dist/css/style","dist/css/prompt","dist/css/popup"], () => (__webpack_require__("./assets/css/popup.css")))
-/******/ 	__webpack_require__.O(undefined, ["dist/css/style","dist/css/prompt","dist/css/popup"], () => (__webpack_require__("./assets/css/prompt.css")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["dist/css/style","dist/css/prompt","dist/css/popup"], () => (__webpack_require__("./assets/css/style.css")))
+/******/ 	__webpack_require__.O(undefined, ["dist/css/prompt","dist/css/style","dist/css/popup"], () => (__webpack_require__("./assets/js/background.js")))
+/******/ 	__webpack_require__.O(undefined, ["dist/css/prompt","dist/css/style","dist/css/popup"], () => (__webpack_require__("./assets/css/popup.css")))
+/******/ 	__webpack_require__.O(undefined, ["dist/css/prompt","dist/css/style","dist/css/popup"], () => (__webpack_require__("./assets/css/style.css")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["dist/css/prompt","dist/css/style","dist/css/popup"], () => (__webpack_require__("./assets/css/prompt.css")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

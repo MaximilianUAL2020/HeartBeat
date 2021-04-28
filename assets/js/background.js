@@ -35,7 +35,7 @@ chrome.storage.local.get(["myCounter", "myState", "myLimit"], (result) => {
 });
 // listen to state changes
 chrome.storage.onChanged.addListener((changes, namespace) => {
-  if (namespace == "local") {
+  if (namespace === "local") {
     if (changes.myState) {
       active = changes.myState.newValue;
       handleState(active);
@@ -43,12 +43,12 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
   }
 });
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.msg == "reset" || request.msg == "close") {
+  if (request.msg === "reset" || request.msg === "close") {
     clearInterval(loop);
     setCounter();
-  } else if (request.msg == "plus") {
+  } else if (request.msg === "plus") {
     incLimit();
-  } else if (request.msg == "minus") {
+  } else if (request.msg === "minus") {
     decLimit();
   }
   sendResponse(null);
@@ -69,11 +69,10 @@ function runCounter() {
 // open new prompt
 function prompt() {
   clearInterval(loop);
-  let pos = randomPos();
   chrome.windows.create(
     {
-      top: pos.h,
-      left: pos.w,
+      top: randomPos().h,
+      left: randomPos().w,
       width: window,
       height: window,
       type: "popup",
@@ -107,23 +106,23 @@ function incLimit() {
   updateLimit();
 }
 function decLimit() {
-  if (limit > step) {
-    limit -= step;
-    updateLimit();
-  } else {
-    return;
-  }
+  if (limit < step) return;
+  limit -= step;
+  updateLimit();
 }
-// toggle the counter
+// play/pause
 function handleState(active) {
+  // pause if active
   if (!active) {
     clearInterval(loop);
+    // reset if break
     if (!counter) {
       clearTimeout(timeout);
       counter = limit;
       updateCounter();
     }
   } else {
+    // resume countdown
     updateCounter();
     loop = setInterval(runCounter, 1000);
   }
