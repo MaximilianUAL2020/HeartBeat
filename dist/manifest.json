@@ -2,7 +2,7 @@
   "name": "HeartBeat",
   "version": "0.0.1",
   "description": "Remember to take breaks while browsing the web.",
-  "permissions": ["storage", "unlimitedStorage", "activeTab"],
+  "permissions": ["storage", "unlimitedStorage"],
   "icons": {
     "16": "icons/16.png",
     "48": "icons/48-on.png",
