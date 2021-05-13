@@ -6,11 +6,11 @@ HeartBeat is a chrome extension that reminds you to take small breaks throughout
 
 ## Case Study
 
-To view the entire case study, please visit my [website](#).
+To view the entire case study, please visit my [website](https://www.maxi.studio/chromeKit).
 
 ## Download
 
-To add HeartBeat as a chrome extension, click [here](#).
+To add HeartBeat as a chrome extension, click [here](https://chrome.google.com/webstore/detail/heartbeat/higkdckeaonccmcibipdjopjllddheng).
 
 ![alt text](https://cdn.glitch.com/b4cd9c5e-4515-4298-ac12-97fd727eaf29%2F210505_Screen_Shot_3.png?v=1620239663857)
 ![alt text](https://cdn.glitch.com/b4cd9c5e-4515-4298-ac12-97fd727eaf29%2F210505_Screen_Shot_4.png?v=1620239666067)
